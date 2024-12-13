@@ -1,6 +1,6 @@
 
 CREATE TABLE categories (
-    category_id INT(11) NOT NULL,
+    category_id INT(11) NOT NULL AUTO_INCREMENT,
     title TEXT,
     PRIMARY KEY (category_id)
 ) ENGINE=InnoDB;
@@ -20,7 +20,7 @@ INSERT INTO users (user_id, username, email, password, first_name, last_name, co
 VALUES (1, 'johndoe', 'johndoe@example.com', 'password', 'John', 'Doe', true);
 
 CREATE TABLE habits (
-    habit_id INT(11) NOT NULL,
+    habit_id INT(11) NOT NULL AUTO_INCREMENT,
     title TEXT,
     description TEXT,
     category_id INT(11),
@@ -31,7 +31,7 @@ CREATE TABLE habits (
 ) ENGINE=InnoDB;
 
 CREATE TABLE habit_logs (
-    log_id INT(11) NOT NULL,
+    log_id INT(11) NOT NULL AUTO_INCREMENT,
     habit_id INT(11),
     log_date DATE,
     status BOOLEAN,
@@ -40,13 +40,13 @@ CREATE TABLE habit_logs (
 ) ENGINE=InnoDB;
 
 CREATE TABLE reminders (
-    reminder_id INT(11) NOT NULL,
+    reminder_id INT(11) NOT NULL AUTO_INCREMENT,
     message TEXT,
     PRIMARY KEY (reminder_id)
 ) ENGINE=InnoDB;
 
 CREATE TABLE habitReminder (
-    habitReminder_id INT(11) NOT NULL,
+    habitReminder_id INT(11) NOT NULL AUTO_INCREMENT,
     habit_id INT(11),
     reminder_id INT(11),
     scheduled_time DATETIME,
@@ -56,7 +56,7 @@ CREATE TABLE habitReminder (
 ) ENGINE=InnoDB;
 
 CREATE TABLE password_resets (
-    pr_id INT(11) NOT NULL,
+    pr_id INT(11) NOT NULL AUTO_INCREMENT,
     token VARCHAR(255),
     expires_at TIME,
     user_id INT(11),
