@@ -1,10 +1,12 @@
 <?php
+session_start(); 
 require 'config.php';  
 require 'valid-pass.php';  
 require 'name-validator.php'; 
 
 $first_name = $last_name = $email = $password = $confirm_password = '';
 $errors = [];
+$success_message = ''; 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     function sanitize_input($data, $conn) {
@@ -51,10 +53,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->bind_param("sssssi", $username, $email, $hashed_password, $first_name, $last_name, $confirmed);
 
             if ($stmt->execute()) {
-                header("Location: registration-success.php");
-                exit();
+                $success_message = "Successfully registered account! Please log in.";
+                $first_name = $last_name = $email = $password = $confirm_password = '';
             } else {
-                $errors[] = "Error occurred while registering the user.";
+                $errors[] = "Error occurred while registering the user: " . $stmt->error;
             }
         }
     }
@@ -87,6 +89,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             foreach ($errors as $error) {
                                 echo "<div class='error-message'>" . htmlspecialchars($error) . "</div>";
                             }
+                        }
+                        if (!empty($success_message)) {
+                            echo "<div class='success-message'>" . htmlspecialchars($success_message) . "</div>";
                         }
                         ?>
                         <form action="register.php" method="POST">
