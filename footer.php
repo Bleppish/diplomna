@@ -6,7 +6,7 @@
                     <h4>Get to Know Us</h4>
                     <ul>
                         <li>
-                            <a href="/Ribit/diplomna/app/about.php">About Us</a>
+                            <a href="/Ribit/diplomna/about.php">About Us</a>
                         </li>
                     </ul>
                 </div>
@@ -14,7 +14,7 @@
                     <h4>My Habits</h4>
                     <ul>
                         <li>
-                            <a href="/Ribit/diplomna/app/dashboard.php">Habits</a>
+                            <a href="/Ribit/diplomna/dashboard.php">Habits</a>
                         </li>
                     </ul>
                 </div>
@@ -22,13 +22,13 @@
                     <h4>My Account</h4>
                     <ul>
                         <li>
-                            <a href="/Ribit/diplomna/app/login.php">Login</a>
+                            <a href="/Ribit/diplomna/login.php">Login</a>
                         </li>
                         <li>
-                            <a href="/Ribit/diplomna/app/register.php">Register</a>
+                            <a href="/Ribit/diplomna/register.php">Register</a>
                         </li>
                         <li>
-                            <a href="/Ribit/diplomna/app/profile.php">My Profile</a>
+                            <a href="/Ribit/diplomna/profile.php">My Profile</a>
                         </li>
                     </ul>
                 </div>

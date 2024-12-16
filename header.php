@@ -21,15 +21,15 @@ require 'config.php';
             </div>
             <nav class="site-header-navigation">
                 <ul class="menu">
-                    <li class="menu-item"><a href="/Ribit/diplomna/app/index.php">Home</a></li>
+                    <li class="menu-item"><a href="/Ribit/diplomna/index.php">Home</a></li>
                     <?php if (!isset($_SESSION['user_id'])): ?>
-                        <li class="menu-item"><a href="/Ribit/diplomna/app/register.php">Register</a></li>
-                        <li class="menu-item"><a href="/Ribit/diplomna/app/login.php">Login</a></li>
+                        <li class="menu-item"><a href="/Ribit/diplomna/register.php">Register</a></li>
+                        <li class="menu-item"><a href="/Ribit/diplomna/login.php">Login</a></li>
                     <?php else: ?>
-                        <li class="menu-item"><a href="/Ribit/diplomna/app/create-habit.php">Add Habit</a></li>
-                        <li class="menu-item"><a href="/Ribit/diplomna/app/dashboard.php">My Habits</a></li>
-                        <li class="menu-item"><a href="/Ribit/diplomna/app/profile.php">Profile</a></li>
-                        <li class="menu-item"><a href="/Ribit/diplomna/app/logout.php">Logout</a></li>
+                        <li class="menu-item"><a href="/Ribit/diplomna/create-habit.php">Add Habit</a></li>
+                        <li class="menu-item"><a href="/Ribit/diplomna/dashboard.php">My Habits</a></li>
+                        <li class="menu-item"><a href="/Ribit/diplomna/profile.php">Profile</a></li>
+                        <li class="menu-item"><a href="/Ribit/diplomna/logout.php">Logout</a></li>
                     <?php endif; ?>
                 </ul>
             </nav>
