@@ -75,7 +75,82 @@ $result = mysqli_query($conn, $sql);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Habit Tracker</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="master.css">
+    <style>
+        .habits-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .habits-table th,
+        .habits-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--color-separator);
+        }
+
+        .habits-table th {
+            background-color: var(--color-muted-light);
+            font-weight: bold;
+        }
+
+        .habits-table tr:hover {
+            background-color: var(--color-muted);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            padding: 8px 12px;
+            text-decoration: none;
+            color: var(--color-primary);
+            border: 1px solid var(--color-primary);
+            border-radius: var(--border-radius-small);
+            transition: background-color 0.3s ease;
+        }
+
+        .pagination a.active {
+            background-color: var(--color-primary);
+            color: var(--color-base-light);
+        }
+
+        .pagination a:hover {
+            background-color: var(--color-primary);
+            color: var(--color-base-light);
+        }
+
+        .filter-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filter-form .form-field-wrapper {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .filter-form input,
+        .filter-form select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--color-separator);
+            border-radius: var(--border-radius-small);
+            font-size: var(--font-size-h6);
+        }
+
+        .filter-form button {
+            flex: 0 0 auto;
+            align-self: flex-end;
+        }
+    </style>
 </head>
 <body>
     <?php include('header.php'); ?>
@@ -88,62 +163,71 @@ $result = mysqli_query($conn, $sql);
                             <h2 class="heading-title">All Habits</h2>
                         </div>
 
-                        <!-- Search and Filter Form -->
                         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="GET" class="filter-form">
-                            <div class="flex-container flex-wrap">
-                                <div class="form-field-wrapper width-medium">
-                                    <input type="text" name="search" placeholder="Search by title" value="<?php echo htmlspecialchars($search); ?>">
-                                </div>
-                                <div class="form-field-wrapper width-medium">
-                                    <select name="category_id">
-                                        <option value="0">All Categories</option>
-                                        <?php
-                                        $sql_categories = "SELECT category_id, title FROM categories";
-                                        $result_categories = $conn->query($sql_categories);
-                                        if ($result_categories->num_rows > 0) {
-                                            while ($row_category = $result_categories->fetch_assoc()) {
-                                                $selected = ($category_id == $row_category['category_id']) ? 'selected' : '';
-                                                echo '<option value="' . htmlspecialchars($row_category['category_id']) . '" ' . $selected . '>' . htmlspecialchars($row_category['title']) . '</option>';
-                                            }
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
-                                <div class="form-field-wrapper width-medium">
-                                    <select name="sort_by">
-                                        <option value="id_desc" <?php echo ($sort_by == 'id_desc') ? 'selected' : ''; ?>>Newest First</option>
-                                        <option value="id_asc" <?php echo ($sort_by == 'id_asc') ? 'selected' : ''; ?>>Oldest First</option>
-                                        <option value="title_asc" <?php echo ($sort_by == 'title_asc') ? 'selected' : ''; ?>>Title (A-Z)</option>
-                                        <option value="title_desc" <?php echo ($sort_by == 'title_desc') ? 'selected' : ''; ?>>Title (Z-A)</option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="button">Apply Filters</button>
+                            <div class="form-field-wrapper">
+                                <input type="text" name="search" placeholder="Search by title" value="<?php echo htmlspecialchars($search); ?>">
                             </div>
+                            <div class="form-field-wrapper">
+                                <select name="category_id">
+                                    <option value="0">All Categories</option>
+                                    <?php
+                                    $sql_categories = "SELECT category_id, title FROM categories";
+                                    $result_categories = $conn->query($sql_categories);
+                                    if ($result_categories->num_rows > 0) {
+                                        while ($row_category = $result_categories->fetch_assoc()) {
+                                            $selected = ($category_id == $row_category['category_id']) ? 'selected' : '';
+                                            echo '<option value="' . htmlspecialchars($row_category['category_id']) . '" ' . $selected . '>' . htmlspecialchars($row_category['title']) . '</option>';
+                                        }
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="form-field-wrapper">
+                                <select name="sort_by">
+                                    <option value="id_desc" <?php echo ($sort_by == 'id_desc') ? 'selected' : ''; ?>>Newest First</option>
+                                    <option value="id_asc" <?php echo ($sort_by == 'id_asc') ? 'selected' : ''; ?>>Oldest First</option>
+                                    <option value="title_asc" <?php echo ($sort_by == 'title_asc') ? 'selected' : ''; ?>>Title (A-Z)</option>
+                                    <option value="title_desc" <?php echo ($sort_by == 'title_desc') ? 'selected' : ''; ?>>Title (Z-A)</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="button">Apply Filters</button>
                         </form>
 
-                        <!-- Display Habits -->
                         <table class="habits-table">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Title</th>
-                                    <th>Description</th>
-                                    <th>Category</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Category</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                echo '<tr>
+                        <td><a href="http://localhost/Ribit/diplomna/single-view.php?habit_id=' . htmlspecialchars($row['habit_id']) . '">' . htmlspecialchars($row['title']) . '</a></td>
+                        <td>' . htmlspecialchars($row['description']) . '</td>
+                        <td>' . htmlspecialchars($row['category_title']) . '</td>
+                      </tr>';
+            }
+        } else {
+            echo '<tr><td colspan="3">No habits found.</td></tr>';
+        }
+        ?>
+    </tbody>
+</table>
                                 <?php
                                 if ($result->num_rows > 0) {
                                     while ($row = $result->fetch_assoc()) {
                                         echo '<tr>
-                                                <td>' . htmlspecialchars($row['habit_id']) . '</td>
                                                 <td>' . htmlspecialchars($row['title']) . '</td>
                                                 <td>' . htmlspecialchars($row['description']) . '</td>
                                                 <td>' . htmlspecialchars($row['category_title']) . '</td>
                                               </tr>';
                                     }
                                 } else {
-                                    echo '<tr><td colspan="4">No habits found.</td></tr>';
+                                    echo '<tr><td colspan="3">No habits found.</td></tr>';
                                 }
                                 ?>
                             </tbody>

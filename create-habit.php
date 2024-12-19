@@ -1,7 +1,6 @@
 <?php
 include('config.php');
-    session_start();
-
+session_start();
 
 if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -30,7 +29,10 @@ $category_id = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = trim($_POST['title']);
     $description = trim($_POST['description']);
-    $category_id = trim($_POST['category']); 
+    $category_id = trim($_POST['category']);
+    $completions_per_day = intval($_POST['completions_per_day']);
+    $reminder_days = $_POST['reminder_days']; 
+    $reminder_time = $_POST['reminder_time']; 
 
     if (empty($title)) {
         $errors[] = "Habit title is required.";
@@ -38,20 +40,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($description)) {
         $errors[] = "Description is required.";
     }
-    if (empty($category_id)) { 
+    if (empty($category_id)) {
         $errors[] = "Category is required.";
+    }
+    if ($completions_per_day < 1) {
+        $errors[] = "Completions per day must be at least 1.";
+    }
+    if (empty($reminder_days)) {
+        $errors[] = "At least one reminder day is required.";
+    }
+    if (empty($reminder_time)) {
+        $errors[] = "Reminder time is required.";
     }
 
     if (empty($errors)) {
-        $user_id = 1; 
-        $sql = "INSERT INTO habits (title, description, category_id, user_id) VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO habits (title, description, category_id, user_id, completions_per_day) VALUES (?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssii", $title, $description, $category_id, $user_id);
+        $stmt->bind_param("ssiii", $title, $description, $category_id, $user_id, $completions_per_day);
         if ($stmt->execute()) {
+            $habit_id = $stmt->insert_id;
+
+            foreach ($reminder_days as $day_id) {
+                $sql_reminder = "INSERT INTO habit_reminders (habit_id, day_id, reminder_time) VALUES (?, ?, ?)";
+                $stmt_reminder = $conn->prepare($sql_reminder);
+                $stmt_reminder->bind_param("iis", $habit_id, $day_id, $reminder_time);
+                $stmt_reminder->execute();
+            }
+
             $success_message = "Habit created successfully!";
-            $title = '';
-            $description = '';
-            $category_id = '';
+            $title = $description = $category_id = '';
         } else {
             $errors[] = "Error creating habit: " . $conn->error;
         }
@@ -60,12 +77,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Habit</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
+
 <body>
     <?php include('header.php'); ?>
     <main class="site-main">
@@ -111,6 +131,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <div class="form-field-wrapper width-large">
                                     <textarea name="description" placeholder="Description*" required><?php echo htmlspecialchars($description); ?></textarea>
                                 </div>
+                                <div class="form-field-wrapper width-large">
+                                    <input type="number" name="completions_per_day" placeholder="Completions per day*" min="1" value="1" required />
+                                </div>
+                                <div class="form-field-wrapper width-large">
+                                    <label for="reminder_days">Reminder Days:</label>
+                                    <select name="reminder_days[]" id="reminder_days" multiple required>
+                                        <?php
+                                        $sql_days = "SELECT day_id, day_name FROM days_of_week";
+                                        $result_days = $conn->query($sql_days);
+                                        if ($result_days->num_rows > 0) {
+                                            while ($row_day = $result_days->fetch_assoc()) {
+                                                echo '<option value="' . htmlspecialchars($row_day['day_id']) . '">' . htmlspecialchars($row_day['day_name']) . '</option>';
+                                            }
+                                        }
+                                        ?>
+                                    </select>
+                                </div>
+                                <div class="form-field-wrapper width-large">
+                                    <label for="reminder_time">Reminder Time:</label>
+                                    <input type="text" name="reminder_time" id="reminder_time" placeholder="Select time" required />
+                                </div>
                             </div>
                             <button type="submit" class="button">Create Habit</button>
                         </form>
@@ -120,5 +161,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </section>
     </main>
     <?php include('footer.php'); ?>
+
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        flatpickr("#reminder_time", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            time_24hr: true,
+            placeholder: "Select time"
+        });
+    </script>
 </body>
+
 </html>

@@ -36,17 +36,17 @@ if ($stmt->num_rows > 0) {
             $mail->isSMTP();                          
             $mail->Host = 'smtp.gmail.com';          
             $mail->SMTPAuth = true;                  
-            $mail->Username = 'devrix.test.first.team@gmail.com';   
+            $mail->Username = 'smth@gmail.com';   
             $mail->Password = 'ttzp ghot zewe jbrh'; 
             $mail->SMTPSecure = 'tls';                
             $mail->Port = 587;  
 
-            $mail->setFrom('devrix.test.first.team@gmail.com', 'JOB OFFERS');
+            $mail->setFrom('smth@gmail.com', 'JOB OFFERS');
             $mail->addAddress($email);
             $mail->isHTML(true);
             $mail->Subject = 'Email Confirmation';
-            $mail->Body = "Please click the link to confirm your email address and complete your registration: <a href='http://localhost/tues-Internship-2024-first-team/confirm-email.php?token=$token'>Confirm Email</a>";
-            $mail->AltBody = "Please click the link to confirm your email address and complete your registration: http://localhost/tues-Internship-2024-first-team/confirm-email.php?token=$token";
+            $mail->Body = "Please click the link to confirm your email address and complete your registration: <a href='http://http://localhost/Ribit/diplomna/confirm-email.php?token=$token'>Confirm Email</a>";
+            $mail->AltBody = "Please click the link to confirm your email address and complete your registration: http://http://localhost/Ribit/diplomna/confirm-email.php?token=$token";
 
             $mail->send();
             echo 'Email confirmation link has been sent to your email.';
