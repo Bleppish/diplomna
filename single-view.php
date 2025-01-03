@@ -1,5 +1,6 @@
 <?php
 include('config.php');
+session_start();
 
 $habit_id = isset($_GET['habit_id']) ? intval($_GET['habit_id']) : 0;
 
@@ -20,6 +21,13 @@ if ($result->num_rows == 0) {
 
 $habit = $result->fetch_assoc();
 
+$sql_logs = "SELECT log_date, status FROM habit_logs WHERE habit_id = $habit_id ORDER BY log_date ASC";
+$result_logs = $conn->query($sql_logs);
+
+$logs = [];
+while ($row = $result_logs->fetch_assoc()) {
+    $logs[] = $row;
+}
 
 $conn->close();
 ?>
@@ -31,6 +39,7 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Habit Details</title>
     <link rel="stylesheet" href="master.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <?php include('header.php'); ?>
@@ -54,10 +63,60 @@ $conn->close();
                             </div>
                         </div>
                     </div>
+
+                    <div class="job-secondary">
+                        <h3>Habit Progress</h3>
+                        <canvas id="habitChart" width="400" height="200"></canvas>
+                    </div>
                 </div>
             </div>
         </section>
     </main>
     <?php include('footer.php'); ?>
+
+    <script>
+        const logs = <?php echo json_encode($logs); ?>;
+
+        const labels = logs.map(log => log.log_date);
+        const data = logs.map(log => log.status ? 1 : 0); /
+
+        const ctx = document.getElementById('habitChart').getContext('2d');
+        const habitChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Habit Completion',
+                    data: data,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                    fill: true, 
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1,
+                            callback: function(value) {
+                                return value === 1 ? 'Completed' : 'Not Completed';
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.raw === 1 ? 'Completed' : 'Not Completed';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>

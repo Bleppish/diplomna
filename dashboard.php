@@ -77,6 +77,33 @@ $result = mysqli_query($conn, $sql);
     <title>Habit Tracker</title>
     <link rel="stylesheet" href="master.css">
     <style>
+        .filter-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filter-form .form-field-wrapper {
+            flex: 1;
+            min-width: 150px; 
+        }
+
+        .filter-form input,
+        .filter-form select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--color-separator);
+            border-radius: var(--border-radius-small);
+            font-size: 0.9em; 
+
+        .filter-form button {
+            flex: 0 0 auto;
+            align-self: flex-end;
+            padding: 8px 16px; 
+            font-size: 0.9em; 
+        }
+
         .habits-table {
             width: 100%;
             border-collapse: collapse;
@@ -95,7 +122,12 @@ $result = mysqli_query($conn, $sql);
             font-weight: bold;
         }
 
-        .habits-table tr:hover {
+        .habits-table tbody tr {
+            cursor: pointer; 
+            transition: background-color 0.3s ease;
+        }
+
+        .habits-table tbody tr:hover {
             background-color: var(--color-muted);
         }
 
@@ -123,32 +155,6 @@ $result = mysqli_query($conn, $sql);
         .pagination a:hover {
             background-color: var(--color-primary);
             color: var(--color-base-light);
-        }
-
-        .filter-form {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .filter-form .form-field-wrapper {
-            flex: 1;
-            min-width: 200px;
-        }
-
-        .filter-form input,
-        .filter-form select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--color-separator);
-            border-radius: var(--border-radius-small);
-            font-size: var(--font-size-h6);
-        }
-
-        .filter-form button {
-            flex: 0 0 auto;
-            align-self: flex-end;
         }
     </style>
 </head>
@@ -194,33 +200,18 @@ $result = mysqli_query($conn, $sql);
                         </form>
 
                         <table class="habits-table">
-    <thead>
-        <tr>
-            <th>Title</th>
-            <th>Description</th>
-            <th>Category</th>
-        </tr>
-    </thead>
-    <tbody>
-        <?php
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                echo '<tr>
-                        <td><a href="http://localhost/Ribit/diplomna/single-view.php?habit_id=' . htmlspecialchars($row['habit_id']) . '">' . htmlspecialchars($row['title']) . '</a></td>
-                        <td>' . htmlspecialchars($row['description']) . '</td>
-                        <td>' . htmlspecialchars($row['category_title']) . '</td>
-                      </tr>';
-            }
-        } else {
-            echo '<tr><td colspan="3">No habits found.</td></tr>';
-        }
-        ?>
-    </tbody>
-</table>
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Category</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                                 <?php
                                 if ($result->num_rows > 0) {
                                     while ($row = $result->fetch_assoc()) {
-                                        echo '<tr>
+                                        echo '<tr onclick="window.location=\'http://localhost/Ribit/diplomna/single-view.php?habit_id=' . htmlspecialchars($row['habit_id']) . '\'">
                                                 <td>' . htmlspecialchars($row['title']) . '</td>
                                                 <td>' . htmlspecialchars($row['description']) . '</td>
                                                 <td>' . htmlspecialchars($row['category_title']) . '</td>
