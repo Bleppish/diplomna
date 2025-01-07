@@ -92,10 +92,11 @@ $result = mysqli_query($conn, $sql);
         .filter-form input,
         .filter-form select {
             width: 100%;
-            padding: 8px;
+            padding: 8px; 
             border: 1px solid var(--color-separator);
             border-radius: var(--border-radius-small);
             font-size: 0.9em; 
+        }
 
         .filter-form button {
             flex: 0 0 auto;
@@ -123,7 +124,7 @@ $result = mysqli_query($conn, $sql);
         }
 
         .habits-table tbody tr {
-            cursor: pointer; 
+            cursor: pointer;
             transition: background-color 0.3s ease;
         }
 
