@@ -44,7 +44,7 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Habit Details</title>
-    <link rel="stylesheet" href="master.css">
+    <link rel="stylesheet" href="css/master.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .job-single {
@@ -101,6 +101,21 @@ $conn->close();
             line-height: 1.6;
             color: var(--color-base-invert);
         }
+
+        .add-completion-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: var(--color-primary);
+            color: var(--color-base-light);
+            border: none;
+            border-radius: var(--border-radius-small);
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .add-completion-button:hover {
+            background-color:rgb(59, 77, 27);
+        }
     </style>
 </head>
 <body>
@@ -131,6 +146,7 @@ $conn->close();
                         <div class="chart-container">
                             <canvas id="habitChart"></canvas>
                         </div>
+                        <button class="add-completion-button" id="addCompletionButton">Add Completion</button>
                     </div>
                 </div>
             </div>
@@ -198,7 +214,7 @@ $conn->close();
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                return `: ${context.raw}`; 
+                                return `Completions: ${context.raw}`; 
                             }
                         }
                     },
@@ -210,6 +226,23 @@ $conn->close();
                     }
                 }
             }
+        });
+
+        const addCompletionButton = document.getElementById('addCompletionButton');
+        addCompletionButton.addEventListener('click', function() {
+            const habitId = <?php echo $habit_id; ?>;
+
+            fetch('log-completion.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ habit_id: habitId }),
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while logging the completion.');
+            });
         });
     </script>
 </body>
