@@ -20,29 +20,44 @@ if ($habit_id <= 0) {
 $user_id = intval($_SESSION['user_id']);
 $log_date = date('Y-m-d'); 
 
-$sql_check = "SELECT log_id FROM habit_logs WHERE habit_id = ? AND log_date = ?";
+$sql_check = "SELECT log_id, completion_count FROM habit_logs WHERE habit_id = ? AND log_date = ?";
 $stmt_check = $conn->prepare($sql_check);
 $stmt_check->bind_param("is", $habit_id, $log_date);
 $stmt_check->execute();
 $stmt_check->store_result();
 
 if ($stmt_check->num_rows > 0) {
-    echo json_encode(['success' => false, 'message' => 'Habit already completed today']);
-    exit();
-}
+    $stmt_check->bind_result($log_id, $completion_count);
+    $stmt_check->fetch();
+    $new_completion_count = $completion_count + 1;
 
-$sql_insert = "INSERT INTO habit_logs (habit_id, log_date, status) VALUES (?, ?, ?)";
-$stmt_insert = $conn->prepare($sql_insert);
-$status = true; 
-$stmt_insert->bind_param("isi", $habit_id, $log_date, $status);
+    $sql_update = "UPDATE habit_logs SET completion_count = ? WHERE log_id = ?";
+    $stmt_update = $conn->prepare($sql_update);
+    $stmt_update->bind_param("ii", $new_completion_count, $log_id);
 
-if ($stmt_insert->execute()) {
-    echo json_encode(['success' => true]);
+    if ($stmt_update->execute()) {
+        echo json_encode(['success' => true, 'completion_count' => $new_completion_count]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Failed to update completion count']);
+    }
+
+    $stmt_update->close();
 } else {
-    echo json_encode(['success' => false, 'message' => 'Database error: ' . $conn->error]);
+    $sql_insert = "INSERT INTO habit_logs (habit_id, log_date, status, completion_count) VALUES (?, ?, ?, ?)";
+    $stmt_insert = $conn->prepare($sql_insert);
+    $status = true; 
+    $completion_count = 1; 
+    $stmt_insert->bind_param("isii", $habit_id, $log_date, $status, $completion_count);
+
+    if ($stmt_insert->execute()) {
+        echo json_encode(['success' => true, 'completion_count' => $completion_count]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Failed to log completion']);
+    }
+
+    $stmt_insert->close();
 }
 
 $stmt_check->close();
-$stmt_insert->close();
 $conn->close();
 ?>

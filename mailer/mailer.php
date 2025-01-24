@@ -27,25 +27,22 @@
 
             $mail = new PHPMailer(true);
             try {
-                // SMTP configuration
                 $mail->SMTPDebug = 0;                     
                 $mail->isSMTP();                          
                 $mail->Host = 'smtp.gmail.com';          
                 $mail->SMTPAuth = true;                  
-                $mail->Username = 'devrix.test.first.team@gmail.com';   // Your Gmail address
-                $mail->Password = 'ttzp ghot zewe jbrh';    // Your App Password
+                $mail->Username = 'smth@gmail.com';  
+                $mail->Password = 'ttzp ghot zewe jbrh';   
                 $mail->SMTPSecure = 'tls';                
                 $mail->Port = 587;  
 
-                // Email content
                 $mail->setFrom('yourname@gmail.com', 'Your Name');
                 $mail->addAddress($email);
                 $mail->isHTML(true);
                 $mail->Subject = 'Password Reset';
-                $mail->Body = "Please click the link to reset your password: <a href='http://localhost/tues-Internship-2024-first-team/reset-password.php?token=$token'>Reset Password</a>";
-                $mail->AltBody = "Please click the link to reset your password: http://localhost/tues-Internship-2024-first-team/reset-password.php?token=$token";
+                $mail->Body = "Please click the link to reset your password: <a href='http://localhost//Ribit/diplomna/reset-password.php?token=$token'>Reset Password</a>";
+                $mail->AltBody = "Please click the link to reset your password: http://localhost/Ribit/diplomna/reset-password.php?token=$token";
 
-                // Send email
                 $mail->send();
                 header("Location: reset-password-success.php");
             } catch (Exception $e) {

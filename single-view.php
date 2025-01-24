@@ -21,7 +21,7 @@ if ($result->num_rows == 0) {
 
 $habit = $result->fetch_assoc();
 
-$sql_logs = "SELECT log_date, COUNT(*) AS completions 
+$sql_logs = "SELECT log_date, SUM(completion_count) AS completions 
              FROM habit_logs 
              WHERE habit_id = $habit_id 
                AND status != 0 
@@ -114,7 +114,7 @@ $conn->close();
         }
 
         .add-completion-button:hover {
-            background-color:rgb(59, 77, 27);
+            background-color: rgb(59, 77, 27);
         }
     </style>
 </head>
@@ -238,6 +238,14 @@ $conn->close();
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ habit_id: habitId }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Failed to log completion: ' + data.message);
+                }
             })
             .catch(error => {
                 console.error('Error:', error);
