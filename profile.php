@@ -6,8 +6,8 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
-
 $user_id = intval($_SESSION['user_id']);
+
 
 $sql_get_user = "SELECT username, email, first_name, last_name, confirmed FROM users WHERE user_id = ?";
 $stmt = $conn->prepare($sql_get_user);
@@ -35,7 +35,7 @@ $confirmed = $user_data['confirmed'] ? 'Yes' : 'No';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css\master.css">
 </head>
 
 <body>
@@ -51,10 +51,6 @@ $confirmed = $user_data['confirmed'] ? 'Yes' : 'No';
 
                         <div class="profile-info">
                             <div class="profile-field">
-                                <label>Username:</label>
-                                <span><?php echo $username; ?></span>
-                            </div>
-                            <div class="profile-field">
                                 <label>Email:</label>
                                 <span><?php echo $email; ?></span>
                             </div>
@@ -65,10 +61,6 @@ $confirmed = $user_data['confirmed'] ? 'Yes' : 'No';
                             <div class="profile-field">
                                 <label>Last Name:</label>
                                 <span><?php echo $last_name; ?></span>
-                            </div>
-                            <div class="profile-field">
-                                <label>Account Confirmed:</label>
-                                <span><?php echo $confirmed; ?></span>
                             </div>
                         </div>
 
